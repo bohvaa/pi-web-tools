@@ -1,0 +1,39 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Check version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          node --input-type=commonjs <<'NODE'
+          const assert = require("node:assert/strict");
+          const { version } = require("./package.json");
+          const lock = require("./package-lock.json");
+          assert.equal(process.env.RELEASE_TAG, `v${version}`, "Release tag must match package.json");
+          assert.equal(lock.version, version, "Lockfile version must match package.json");
+          assert.equal(lock.packages[""].version, version, "Lockfile root version must match package.json");
+          NODE
+
+      - run: npm publish --access public

@@ -1,7 +1,21 @@
 {
-  "name": "pi-web-tools",
+  "name": "@bohvaa/pi-web-tools",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bohvaa/pi-web-tools.git"
+  },
+  "keywords": [
+    "pi-package"
+  ],
   "type": "module",
+  "files": [
+    "index.ts",
+    "providers.ts"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check ."
